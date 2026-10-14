@@ -33,8 +33,8 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-surface/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.06)]'
+        scrolled || menuOpen
+          ? 'bg-[#fbf9f5] shadow-[0_1px_12px_rgba(0,0,0,0.08)]'
           : 'bg-transparent'
       }`}
     >
@@ -43,14 +43,14 @@ export default function Navbar() {
         <a href="#home" className="flex flex-col text-left group">
           <span
             className={`font-headline-md text-headline-md tracking-wider transition-colors ${
-              scrolled ? 'text-primary' : 'text-surface-bright'
+              scrolled || menuOpen ? 'text-primary' : 'text-surface-bright'
             } group-hover:text-secondary`}
           >
             KUALI
           </span>
           <span
             className={`font-label-caps text-label-caps uppercase tracking-widest -mt-1 transition-colors ${
-              scrolled ? 'text-on-surface-variant' : 'text-primary-fixed-dim'
+              scrolled || menuOpen ? 'text-on-surface-variant' : 'text-primary-fixed-dim'
             }`}
           >
             Bali Villa Dining
@@ -91,7 +91,9 @@ export default function Navbar() {
           </a>
           {/* Mobile hamburger */}
           <button
-            className={`lg:hidden w-8 h-8 flex flex-col justify-center gap-1.5 ${scrolled ? 'text-primary' : 'text-surface-bright'}`}
+            className={`lg:hidden w-8 h-8 flex flex-col justify-center gap-1.5 transition-colors ${
+              scrolled || menuOpen ? 'text-primary' : 'text-surface-bright'
+            }`}
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
@@ -104,25 +106,35 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="lg:hidden bg-surface/98 backdrop-blur-xl border-t border-outline-variant px-6 py-6 space-y-4">
-          {navLinks.map((link) => (
+        <div className="lg:hidden bg-[#fbf9f5] border-t border-[rgba(140,106,83,0.15)] shadow-2xl px-6 py-6 space-y-3">
+          {navLinks.map((link) => {
+            const id = link.href.replace('#', '');
+            const isActive = active === id;
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={`block font-label-lg text-[15px] py-2.5 px-3 rounded-lg transition-colors ${
+                  isActive
+                    ? 'text-secondary bg-[rgba(143,76,45,0.08)] font-semibold'
+                    : 'text-primary hover:text-secondary hover:bg-[rgba(143,76,45,0.04)] font-medium'
+                }`}
+              >
+                {link.label}
+              </a>
+            );
+          })}
+          <div className="pt-2">
             <a
-              key={link.href}
-              href={link.href}
+              href="#book"
               onClick={() => setMenuOpen(false)}
-              className="block font-label-lg text-label-lg text-on-surface-variant hover:text-secondary py-2 transition-colors"
+              className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-secondary text-on-primary font-label-md text-label-md uppercase tracking-wider shadow-md hover:bg-on-secondary-container transition-all"
             >
-              {link.label}
+              <span className="material-symbols-outlined text-[16px]">chat</span>
+              Book via WhatsApp
             </a>
-          ))}
-          <a
-            href="#book"
-            onClick={() => setMenuOpen(false)}
-            className="mt-4 flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-secondary text-on-primary font-label-md text-label-md uppercase tracking-wider"
-          >
-            <span className="material-symbols-outlined text-[16px]">chat</span>
-            Book via WhatsApp
-          </a>
+          </div>
         </div>
       )}
     </header>
